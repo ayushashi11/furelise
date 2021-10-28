@@ -1,17 +1,28 @@
 pub mod style;
 use iced::{button::State, Align, Button, Column, Element, Row, Sandbox, Settings, Text};
-#[derive(Default)]
-struct Counter {
-    value: String,
+struct Counter<'a> {
+    value: Column<'a, Message>,
     inc: State,
     dec: State,
 }
 #[derive(Copy, Clone, Debug)]
 enum Message {
+    Nop,
     Inc,
     Dec,
 }
-impl Sandbox for Counter {
+
+impl<'a> Default for Counter<'a>{
+    fn default() -> Self{
+        Self{value: Column::new().push(Text::new("Hello world!")).into(), inc: State::default(), dec: State::default()}
+    }
+}
+impl Default for Message{
+    fn default() -> Self{
+        Message::Nop
+    }
+}
+impl<'a> Sandbox for Counter<'a> {
     type Message = Message;
     fn new() -> Self {
         Self::default()
@@ -22,11 +33,11 @@ impl Sandbox for Counter {
     fn update(&mut self, message: Self::Message) {
         match message {
             Message::Inc => {
-                self.value.push('a');
+                
             }
             Message::Dec => {
-                self.value.pop();
             }
+            _ => {}
         }
     }
     fn view(&mut self) -> Element<Message> {
@@ -37,13 +48,13 @@ impl Sandbox for Counter {
                     .padding(20)
                     .align_items(Align::Center)
                     .push(
-                        Button::new(&mut self.inc, Text::new("Increment"))
+                        Button::new(&mut self.inc, Text::new("Inc"))
                             .on_press(Message::Inc)
                             .style(style::Theme::Dark),
                     )
-                    .push(Text::new(self.value.to_string()).size(50))
+                    //.push(self.value)
                     .push(
-                        Button::new(&mut self.dec, Text::new("Decrement"))
+                        Button::new(&mut self.dec, Text::new("Dec"))
                             .on_press(Message::Dec)
                             .style(style::Theme::Dark),
                     ),
